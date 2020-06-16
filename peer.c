@@ -10,6 +10,7 @@
 #include<sys/stat.h>
 #include<pthread.h>
 #include<netdb.h>
+#include<time.h>
 #include"type.h"
 
 #define ROOM_NAME_LEN 64
@@ -45,7 +46,7 @@ void receive_available_rooms(packet *pkt);
 //message
 void send_message(char *msg);
 void receive_message(struct sockaddr_in *sender_addr, packet *pkt);
-
+char* timeToString(struct tm *t);
 //manage connection
 void reply_to_ping(struct sockaddr_in *sender_addr);
 void user_connection_updates(packet *pkt);
@@ -399,12 +400,18 @@ void send_message(char *msg){
 		pthread_mutex_unlock(&stdout_lock);
 	}
 
+    struct tm *t;
+    time_t timer;
+    timer = time(NULL);
+    t = localtime(&timer);
+    char * time_msg = timeToString(t);
     //make packet
     packet pkt;
     pkt.header.room = room_num;
 	pkt.header.type = 'm';
-	pkt.header.payload_length = strlen(msg) + 1;
-	memcpy(pkt.payload, msg, pkt.header.payload_length);
+    memcpy(pkt.payload, msg, pkt.header.payload_length);
+    strcat(pkt.payload, time_msg);
+	pkt.header.payload_length = strlen(msg) + strlen(time_msg) + 1;
 	pkt.header.error = '\0';
 	
     //send to every peer
@@ -430,6 +437,16 @@ void receive_message(struct sockaddr_in *sender_addr, packet *pkt){
 		printf("%s:%d : %s\n", sender_ip, sender_port, pkt->payload);
 		pthread_mutex_unlock(&stdout_lock);
 	}
+}
+char* timeToString(struct tm *t){
+    static char s[20];
+
+     sprintf(s, "%04d-%02d-%02d %02d:%02d:%02d",
+              t->tm_year + 1900, t->tm_mon + 1, t->tm_mday,
+              t->tm_hour, t->tm_min, t->tm_sec
+          );
+
+  return s;
 }
 
 //manage connection
