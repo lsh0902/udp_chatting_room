@@ -4,8 +4,14 @@ p2p chatting room
 sudo gcc -o server server.c -lpthread -lm
 sudo gcc -o peer peer.c -lpthread
 ====================
+To execute
+./server port
+./peer server-ip server-port my-port
 
+ex) ./server 8000
+    ./peer 192.168.46.15 8000 8000
 
+====================
 server command
 -i
 
