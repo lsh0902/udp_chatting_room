@@ -325,7 +325,7 @@ void * ping_output(void * ptr) {
 	while (1) {
 		if ((float)(clock() - t) / CLOCKS_PER_SEC >= 5) { //ping time interval over
 			pthread_mutex_lock(&stdout_lock);
-			fprintf(stderr, "Checking peer alive\n");
+			fprintf(stderr, "Checking peer alive . \n");
 			pthread_mutex_unlock(&stdout_lock);
 			delete_peer();
 			send_pings();

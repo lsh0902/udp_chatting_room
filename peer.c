@@ -26,6 +26,7 @@ pthread_mutex_t stdout_lock;
 pthread_mutex_t peer_list_lock;
 
 //=========function prototype========//
+void process_info();
 void parse_args(int argc, char **argv);
 void *read_input(void *ptr);
 void receive_pkt();
@@ -63,6 +64,8 @@ int main(int argc, char ** argv){
 		fprintf(stderr, "%s\n", "error - error binding.");
 		return -1;
 	}
+    //process info
+    process_info();
 
     pthread_t input_thread;
     pthread_create(&input_thread, NULL, read_input, NULL);
@@ -70,7 +73,22 @@ int main(int argc, char ** argv){
 
 	receive_pkt();
 }
-
+void process_info(){
+    fprintf(stderr, "201620623 leeseunghwan");
+    fprintf(stderr, "*****************************************\n");
+    fprintf(stderr, "|    ----.  |'| ___    ____     |'|     |\n");
+    fprintf(stderr, "|   / /--'  | |/ _ \  /     \  [   ]    |\n");
+    fprintf(stderr, "|   \ \___  |  /  | |(  ( )  \  | |     |\n");
+    fprintf(stderr, "|    '----' |_|   |_|  \___|\_\ |_|     |\n");
+    fprintf(stderr, "*****************************************\n");
+    fprintf(stderr, "command list : c j l m r i\n");
+    fprintf(stderr, "if you want to join room, you need to put room number\n");
+    fprintf(stderr, "ex) -j 1 \n");
+    fprintf(stderr, "send message\n");
+    fprintf(stderr, "ex) -m message \n");
+    fprintf(stderr, "To create room, type command below\n");
+    fprintf(stderr, "ex) -c room_name \n");
+}
 
 void parse_args(int argc, char **argv){
     if (argc != 4) {
