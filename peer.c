@@ -74,12 +74,12 @@ int main(int argc, char ** argv){
 	receive_pkt();
 }
 void process_info(){
-    fprintf(stderr, "201620623 leeseunghwan");
+    fprintf(stderr, "201620623 leeseunghwan\n");
     fprintf(stderr, "*****************************************\n");
     fprintf(stderr, "|    ----.  |'| ___    ____     |'|     |\n");
-    fprintf(stderr, "|   / /--'  | |/ _ \  /     \  [   ]    |\n");
-    fprintf(stderr, "|   \ \___  |  /  | |(  ( )  \  | |     |\n");
-    fprintf(stderr, "|    '----' |_|   |_|  \___|\_\ |_|     |\n");
+    fprintf(stderr, "|   / /--'  | |/ _ \\  /     \\  [   ]    |\n");
+    fprintf(stderr, "|   \\ \\___  |  /  | | \\ ( )  \\  | |     |\n");
+    fprintf(stderr, "|    '----' |_|   |_|  \\___|\\_\\ |_|     |\n");
     fprintf(stderr, "*****************************************\n");
     fprintf(stderr, "command list : c j l m r i\n");
     fprintf(stderr, "if you want to join room, you need to put room number\n");
@@ -88,6 +88,7 @@ void process_info(){
     fprintf(stderr, "ex) -m message \n");
     fprintf(stderr, "To create room, type command below\n");
     fprintf(stderr, "ex) -c room_name \n");
+    fprintf(stderr, "===================================================== \n");
 }
 
 void parse_args(int argc, char **argv){

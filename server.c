@@ -42,6 +42,7 @@ pthread_mutex_t stdout_lock;
 pthread_mutex_t peer_lock;
 
 //====function prototype line====//
+void prin_info();
 short parse_args(int argc, char **argv);
 //linked-list function
 void ADD_PEER(struct peer* p);
@@ -69,6 +70,7 @@ short get_port(char* ip_port);
 struct sockaddr_in get_sockaddr_in(unsigned int ip, short port);
 
 int main(int argc, char **argv) {
+	prin_info();
 	//peer for linked-list
 	head = (struct peer*)malloc(sizeof(struct peer));
 	head->Next = NULL;
@@ -163,7 +165,11 @@ int main(int argc, char **argv) {
 	}
 	return 0;
 }
-
+void prin_info(){
+	fprintf(stderr, "chatting room manage server\n");
+	fprintf(stderr, "Get peer infomation command : -i \n");
+	return ;
+}
 
 short parse_args(int argc, char **argv) {
 	if (argc < 2){
