@@ -205,7 +205,7 @@ void create_room_request(char * msg){
     //check room name
     if (msg[0] == '\0') {
 		pthread_mutex_lock(&stdout_lock);
-		fprintf(stderr, "%s\n", "error - no room name.\n");
+		fprintf(stderr, "no room name.\n");
 		pthread_mutex_unlock(&stdout_lock);
 		return; 
 	}
@@ -264,7 +264,7 @@ void request_available_rooms(){
 	int status = sendto(sock, &pkt, sizeof(pkt.header), 0, (struct sockaddr *)&server_addr, sizeof(struct sockaddr_in));
 	if (status == -1) {
 		pthread_mutex_lock(&stdout_lock);
-		fprintf(stderr, "%s\n", "error - error sending packet to tracker");
+		fprintf(stderr, "error - error sending packet to tracker\n");
 		pthread_mutex_unlock(&stdout_lock);
 	}
 }
@@ -272,12 +272,12 @@ void request_available_rooms(){
 void room_info_request(){
     if (peer_num == 0) {
 		pthread_mutex_lock(&stdout_lock);
-		fprintf(stderr, "%s\n", "error - you are not in any room!");
+		fprintf(stderr, "you are not in any room now\n");
 		pthread_mutex_unlock(&stdout_lock);
 	}
     else{
         pthread_mutex_lock(&stdout_lock);
-        fprintf(stderr, "your room number %d names %s", room_num, room_name);
+        fprintf(stderr, "your room number %d names %s\n", room_num, room_name);
 
         printf("%s\n", "member: ");
 		int i;
@@ -299,13 +299,13 @@ void create_room_reply(packet *pkt){
 	if (error != '\0') {
 		pthread_mutex_lock(&stdout_lock);
 		if (error == 'o') {
-			fprintf(stderr, "%s\n", "error - the application is out of chatroom!");
+			fprintf(stderr, "error - the application is out of chatroom!\n");
 		}
 		else if (error == 'e') {
-			fprintf(stderr, "%s\n", "error - you already exist in a chatroom!");
+			fprintf(stderr, "error - you already exist in a chatroom!\n");
 		}
 		else {
-			fprintf(stderr, "%s\n", "error - unspecified error.");
+			fprintf(stderr, "error - unspecified error.\n");
 		}
 		pthread_mutex_unlock(&stdout_lock);
 		return;
@@ -327,16 +327,16 @@ void enter_room_reply(packet *pkt){
 	if (error != '\0') {
 		pthread_mutex_lock(&stdout_lock);
 		if (error == 'f') {
-			fprintf(stderr, "%s\n", "error - the chatroom is full!");
+			fprintf(stderr, "error - the chatroom is full!\n");
 		}
 		else if (error == 'e') {
-			fprintf(stderr, "%s\n", "error - the chatroom does not exist!");
+			fprintf(stderr, "error - the chatroom does not exist!\n");
 		}
 		else if (error == 'a') {
-			fprintf(stderr, "%s\n", "error - you are already in that chatroom!");
+			fprintf(stderr, "error - you are already in that chatroom!\n");
 		}
 		else {
-			fprintf(stderr, "%s\n", "error - unspecified error.");
+			fprintf(stderr, "error - unspecified error.\n");
 		}
 		pthread_mutex_unlock(&stdout_lock);
 		return;
@@ -347,7 +347,7 @@ void enter_room_reply(packet *pkt){
     peer_num = pkt->header.payload_length / sizeof(struct sockaddr_in);
 	if (peer_num <= 0) {
 		pthread_mutex_lock(&stdout_lock);
-		fprintf(stderr, "peer list missing, can't join chatroom, leaving old chatroom if switching.");
+		fprintf(stderr, "peer list missing, can't join chatroom, leaving old chatroom if switching.\n");
 		pthread_mutex_unlock(&stdout_lock);
 		room_num = 0;
 		peer_num = 0;
@@ -355,7 +355,7 @@ void enter_room_reply(packet *pkt){
 	else {
 		memcpy(peer_list, pkt->payload, peer_num * sizeof(struct sockaddr_in));
 		pthread_mutex_lock(&stdout_lock);
-		fprintf(stderr, "you have joined chatroom %d", room_num);
+		fprintf(stderr, "you have joined chatroom %d\n", room_num);
 		pthread_mutex_unlock(&stdout_lock);
 	}
 	pthread_mutex_unlock(&peer_list_lock);
@@ -409,9 +409,10 @@ void send_message(char *msg){
     packet pkt;
     pkt.header.room = room_num;
 	pkt.header.type = 'm';
-    memcpy(pkt.payload, msg, pkt.header.payload_length);
+    strcat(pkt.payload, msg);
+    strcat(pkt.payload, " ");
     strcat(pkt.payload, time_msg);
-	pkt.header.payload_length = strlen(msg) + strlen(time_msg) + 1;
+	pkt.header.payload_length = strlen(msg) + strlen(time_msg) + 2;
 	pkt.header.error = '\0';
 	
     //send to every peer
@@ -434,7 +435,7 @@ void receive_message(struct sockaddr_in *sender_addr, packet *pkt){
 	// if received message is from same room
 	if (pkt->header.room == room_num) {
 		pthread_mutex_lock(&stdout_lock);
-		printf("%s:%d : %s\n", sender_ip, sender_port, pkt->payload);
+		printf("%s %d : %s\n", sender_ip, sender_port, pkt->payload);
 		pthread_mutex_unlock(&stdout_lock);
 	}
 }
