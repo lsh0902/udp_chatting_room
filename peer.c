@@ -76,10 +76,10 @@ int main(int argc, char ** argv){
 void process_info(){
     fprintf(stderr, "201620623 leeseunghwan\n");
     fprintf(stderr, "*****************************************\n");
-    fprintf(stderr, "|    ----.  |'| ___    ____     |'|     |\n");
-    fprintf(stderr, "|   / /--'  | |/ _ \\  /     \\  [   ]    |\n");
-    fprintf(stderr, "|   \\ \\___  |  /  | | \\ ( )  \\  | |     |\n");
-    fprintf(stderr, "|    '----' |_|   |_|  \\___|\\_\\ |_|     |\n");
+    fprintf(stderr, "|    ----.  |'| ___    ____    |'|     |\n");
+    fprintf(stderr, "|   / /--'  | |/_ \\  /     \\  [   ]    |\n");
+    fprintf(stderr, "|   \\ \\___  | /  | | \\ ( )  \\  | |     |\n");
+    fprintf(stderr, "|    '----' |_|  |_|  \\___|\\_\\ |_|     |\n");
     fprintf(stderr, "*****************************************\n");
     fprintf(stderr, "command list : c j l m r i\n");
     fprintf(stderr, "if you want to join room, you need to put room number\n");

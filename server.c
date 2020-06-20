@@ -329,7 +329,7 @@ void * ping_output(void * ptr) {
 	send_pings();
 	t = clock();
 	while (1) {
-		if ((float)(clock() - t) / CLOCKS_PER_SEC >= 5) { //ping time interval over
+		if ( (float)(clock() - t) / CLOCKS_PER_SEC >= 5) { //ping time interval over
 			pthread_mutex_lock(&stdout_lock);
 			fprintf(stderr, "Checking peer alive . \n");
 			pthread_mutex_unlock(&stdout_lock);
@@ -448,11 +448,12 @@ void peer_leave_room(struct sockaddr_in addr){
   
    p = FIND_PEER(ip_port_addr);
    if(p != NULL){
+	
 	unsigned int left_room = p->room_info.num;
     pthread_mutex_lock(&peer_lock);
     PEER_DEL(p);
-    
     pthread_mutex_unlock(&peer_lock);
+
     pthread_mutex_lock(&stdout_lock);
     fprintf(stderr, "%s left %d\n", ip_port_addr, left_room);
     pthread_mutex_unlock(&stdout_lock);
@@ -561,18 +562,18 @@ void peer_join_room(struct sockaddr_in addr, unsigned int room){
 void room_list(struct sockaddr_in addr){
 	int number_of_rooms = get_total_room_number();
 	int max_room_num_len;
-	unsigned int room_indexed[number_of_rooms];
-	memset(room_indexed, 0, number_of_rooms * sizeof(room_indexed[0]));
-	unsigned int room_nums[number_of_rooms];
-	memset(room_nums, 0, number_of_rooms * sizeof(room_nums[0]));
-	int room_stats[number_of_rooms];
-	memset(room_stats, 0, number_of_rooms * sizeof(room_stats[0]));
-	char * room_name[number_of_rooms];
+	unsigned int room_indexed[MAX_ROOM_SIZE];
+	memset(room_indexed, 0, MAX_ROOM_SIZE * sizeof(room_indexed[0]));
+	unsigned int room_nums[MAX_ROOM_SIZE];
+	memset(room_nums, 0, MAX_ROOM_SIZE * sizeof(room_nums[0]));
+	int room_stats[MAX_ROOM_SIZE];
+	memset(room_stats, 0, MAX_ROOM_SIZE * sizeof(room_stats[0]));
+	char * room_name[MAX_ROOM_SIZE];
 
 	//each room num, name, peer num
-	for(int i=0;i<number_of_rooms;i++)
+	for(int i=0;i<MAX_ROOM_SIZE;i++)
 		room_name[i] = (char*)malloc(sizeof(char)* 64);
-	for(int i=0;i<number_of_rooms;i++)
+	for(int i=0;i<MAX_ROOM_SIZE;i++)
 		room_nums[i] = i + 1;
 
 	struct peer *p;
@@ -580,9 +581,14 @@ void room_list(struct sockaddr_in addr){
 	unsigned int max_room_number =0;
 	int num_rooms_indexed = 0;
 	for(p = head->Next; p!=NULL; p = p->Next){
+	
+		pthread_mutex_lock(&stdout_lock);
+		fprintf(stderr,"peer prinninininin %s : %d\n",p->ip_port_address, p->room_info.num);
+		pthread_mutex_unlock(&stdout_lock);
+	
 		int room_index = -1;
 		unsigned int save_index;
-		for(save_index=0; save_index<number_of_rooms; save_index++){
+		for(save_index=0; save_index<MAX_ROOM_SIZE; save_index++){
 			if(room_nums[save_index]==p->room_info.num){
 				room_index=save_index;
 				break;
@@ -621,18 +627,28 @@ void room_list(struct sockaddr_in addr){
 	int list_size = max_num_room_len*list_entry_size;
 	char *list_entry = (char *)malloc(list_entry_size);
 	char *list = (char *)malloc(list_size);
-	unsigned int i;
+	unsigned int i=0;
 	char *list_i = list;
-	for(i=0; i<sizeof(room_stats)/sizeof(room_stats[0]); i++){
-		sprintf(list_entry, list_entry_format, room_nums[i], room_name[i], room_stats[i], MAX_CAPACITY);
-		strcpy(list_i, list_entry);
-		list_i += strlen(list_entry);
+	
+	while(i<sizeof(room_stats)/sizeof(room_stats[0])) {
+	
+		if(room_stats[i] > 0){
+			sprintf(list_entry, list_entry_format, room_nums[i], room_name[i], room_stats[i], MAX_CAPACITY);
+			strcpy(list_i, list_entry);
+			list_i += strlen(list_entry);
+			
+		}
+		i++;
 	}
 	if(number_of_rooms==0){
 		list=(char*)"There are no chatrooms\n";
 	}
 	pthread_mutex_lock(&stdout_lock);
 	fprintf(stderr, "room list\n%s\n", list);
+	pthread_mutex_unlock(&stdout_lock);
+
+	pthread_mutex_lock(&stdout_lock);
+	fprintf(stderr, "test = room 2 %s   %d\n", room_name[1], room_stats[1]);
 	pthread_mutex_unlock(&stdout_lock);
 
 	packet pkt;
@@ -647,6 +663,8 @@ void room_list(struct sockaddr_in addr){
 		fprintf(stderr, "error occured in sending packet to peer");
 		pthread_mutex_unlock(&stdout_lock);
 	}
+	for(int j=0;j<MAX_ROOM_SIZE;j++)
+		free(room_name[j]);
 }
 void peer_list(unsigned int ip, short port, unsigned int room){
 	struct peer * p;
