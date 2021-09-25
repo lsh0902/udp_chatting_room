@@ -1,6 +1,6 @@
 p2p chatting room
 
-======Compile======
+#Compile
 sudo gcc -o server server.c -lpthread -lm
 sudo gcc -o peer peer.c -lpthread
 ====================
