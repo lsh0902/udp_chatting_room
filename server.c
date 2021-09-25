@@ -20,6 +20,7 @@
 #define MAX_ROOM_SIZE 7
 #define MAX_CAPACITY 5
 #define ROOM_NAME_LEN 64
+#define AAAA 23
 
 //def struct
 typedef struct ROOM {
